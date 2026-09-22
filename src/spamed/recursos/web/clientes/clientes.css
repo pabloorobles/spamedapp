@@ -1,0 +1,9 @@
+/* Clientes — solo lo que no está ya en comun/base.css. */
+
+td.alertas { color: var(--alerta); font-size: 12px; }
+tbody tr.seleccionada td.file,
+tbody tr.seleccionada { color: inherit; }
+button.icono-quitar {
+  background: transparent; border: none; color: var(--error); cursor: pointer;
+  font-size: 12px; padding: 2px 6px;
+}

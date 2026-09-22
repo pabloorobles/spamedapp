@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Reportes</title>
+<link rel="stylesheet" href="spamed://app/comun/tokens.css">
+<link rel="stylesheet" href="spamed://app/comun/base.css">
+<link rel="stylesheet" href="spamed://app/reportes/reportes.css">
+</head>
+<body>
+  <div class="cab">
+    <div>
+      <h1>Reportes</h1>
+      <div class="cab__bajada" id="bajada">Cargando…</div>
+    </div>
+    <div class="cab__acciones">
+      <button class="btn btn-suave" id="btnActualizar" type="button">Actualizar</button>
+      <button class="btn btn-suave" id="btnPdf" type="button">Exportar PDF</button>
+      <button class="btn btn-primario" id="btnExcel" type="button">Exportar a Excel</button>
+    </div>
+  </div>
+
+  <div class="filtros">
+    <label for="selReporte">Reporte</label>
+    <select class="campo campo--ancho" id="selReporte"></select>
+  </div>
+
+  <div class="panel" style="padding:0; overflow:hidden">
+    <div class="tabla-wrap">
+      <table>
+        <thead id="cabTabla"></thead>
+        <tbody id="tablaReporte"></tbody>
+      </table>
+    </div>
+  </div>
+  <div class="totales" id="pie"></div>
+
+  <script src="spamed://app/comun/qwebchannel.js"></script>
+  <script src="spamed://app/comun/util.js"></script>
+  <script src="spamed://app/reportes/reportes.js"></script>
+</body>
+</html>

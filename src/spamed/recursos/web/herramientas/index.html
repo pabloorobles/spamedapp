@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Herramientas</title>
+<link rel="stylesheet" href="spamed://app/comun/tokens.css">
+<link rel="stylesheet" href="spamed://app/comun/base.css">
+<link rel="stylesheet" href="spamed://app/herramientas/herramientas.css">
+</head>
+<body>
+  <div class="cab">
+    <div>
+      <h1>Herramientas</h1>
+      <div class="cab__bajada">Importar datos, copias de seguridad y preferencias</div>
+    </div>
+  </div>
+
+  <div class="herramientas__titulo">Datos</div>
+  <div class="herramienta">
+    <div class="herramienta__texto">
+      <div class="herramienta__nombre">Descargar la plantilla de Excel</div>
+      <div class="herramienta__detalle">El archivo modelo para la carga inicial: una hoja por tipo
+        de dato, con los títulos de columna que espera la aplicación, un ejemplo en cada una y una
+        hoja de instrucciones. Completalo y después importalo con el botón de abajo.</div>
+    </div>
+    <button class="btn btn-acento" id="btnPlantilla" type="button">Descargar plantilla</button>
+  </div>
+  <div class="herramienta">
+    <div class="herramienta__texto">
+      <div class="herramienta__nombre">Importar desde Excel</div>
+      <div class="herramienta__detalle">Trae clientes, vendedores, operadores, reservas y caja
+        desde el libro BaseDatosSpamed. Se puede reemplazar todo o sumar sobre lo que ya está
+        cargado.</div>
+    </div>
+    <button class="btn btn-primario" id="btnImportar" type="button">Importar Excel…</button>
+  </div>
+
+  <div class="herramientas__titulo">Copias de seguridad</div>
+  <div class="herramienta">
+    <div class="herramienta__texto">
+      <div class="herramienta__nombre">Hacer una copia ahora</div>
+      <div class="herramienta__detalle">Guarda el estado actual de la base. Además se hace una
+        copia automática cada vez que cerrás el programa.</div>
+    </div>
+    <button class="btn btn-suave" id="btnBackup" type="button">Crear copia</button>
+  </div>
+  <div class="herramienta">
+    <div class="herramienta__texto">
+      <div class="herramienta__nombre">Restaurar una copia</div>
+      <div class="herramienta__detalle">Vuelve a un estado anterior. Antes de reemplazar nada,
+        guarda una copia de lo que hay ahora.</div>
+    </div>
+    <button class="btn btn-suave" id="btnRestaurar" type="button">Restaurar…</button>
+  </div>
+  <div class="herramienta">
+    <div class="herramienta__texto">
+      <div class="herramienta__nombre">Abrir la carpeta de datos</div>
+      <div class="herramienta__detalle" id="detalleCarpeta">Ahí viven la base y las copias.</div>
+    </div>
+    <button class="btn btn-suave" id="btnCarpeta" type="button">Abrir carpeta</button>
+  </div>
+
+  <div class="herramientas__titulo">Preferencias</div>
+  <div class="herramienta">
+    <div class="herramienta__texto">
+      <div class="herramienta__nombre">Aspecto de la aplicación</div>
+      <div class="herramienta__detalle">Alterna entre el tema claro y el oscuro.</div>
+    </div>
+    <button class="btn btn-suave" id="btnTema" type="button">Cambiar tema</button>
+  </div>
+  <div class="herramienta">
+    <div class="herramienta__texto">
+      <div class="herramienta__nombre">Configuración general</div>
+      <div class="herramienta__detalle">Nombre de la agencia, datos para los documentos,
+        porcentaje mínimo de seña y prefijo de los files.</div>
+    </div>
+    <button class="btn btn-suave" id="btnConfigurar" type="button">Configurar…</button>
+  </div>
+
+  <div class="herramientas__titulo">Diagnóstico</div>
+  <div class="herramienta">
+    <div class="herramienta__texto">
+      <div class="herramienta__nombre">Ver información técnica</div>
+      <div class="herramienta__detalle">Versión, ubicación de la base, cantidad de registros y los
+        últimos errores registrados. Sirve para pasarle el detalle a quien te da soporte. También
+        se abre con Ctrl+Shift+D.</div>
+    </div>
+    <button class="btn btn-suave" id="btnDiagnostico" type="button">Ver diagnóstico</button>
+  </div>
+
+  <div class="herramientas__titulo">Acerca de</div>
+  <div class="herramienta">
+    <div class="herramienta__texto">
+      <div class="herramienta__nombre" id="nombreVersion">Spamed Travel</div>
+      <div class="herramienta__detalle">Gestión de reservas, caja, comisiones y documentos.</div>
+    </div>
+    <button class="btn btn-suave" id="btnAcerca" type="button">Ver información</button>
+  </div>
+
+  <script src="spamed://app/comun/qwebchannel.js"></script>
+  <script src="spamed://app/herramientas/herramientas.js"></script>
+</body>
+</html>

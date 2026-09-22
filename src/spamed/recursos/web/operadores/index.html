@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Operadores</title>
+<link rel="stylesheet" href="spamed://app/comun/tokens.css">
+<link rel="stylesheet" href="spamed://app/comun/base.css">
+<link rel="stylesheet" href="spamed://app/operadores/operadores.css">
+</head>
+<body>
+  <div class="cab">
+    <div>
+      <h1>Operadores</h1>
+      <div class="cab__bajada" id="bajada">Cargando…</div>
+    </div>
+    <div class="cab__acciones">
+      <button class="btn btn-primario" id="btnNuevo" type="button">Nuevo</button>
+    </div>
+  </div>
+
+  <div class="filtros">
+    <input class="campo campo--ancho" type="search" id="fBusqueda" placeholder="Buscar operadores...">
+    <label class="check"><input type="checkbox" id="fActivos"> Solo activos</label>
+  </div>
+
+  <div class="panel">
+    <div class="acciones">
+      <button class="btn btn-suave" id="btnEditar" type="button" disabled>Editar</button>
+      <span class="acciones__espacio"></span>
+      <button class="btn btn-suave" id="btnEliminar" type="button" disabled>Eliminar</button>
+      <button class="btn btn-suave" id="btnExportar" type="button">Exportar</button>
+    </div>
+    <div class="tabla-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Nombre</th><th>Tipo</th><th>Moneda</th>
+            <th class="num">Comisión</th><th>Paga neto</th><th>Contacto</th>
+            <th>Teléfono</th><th class="num">Files</th>
+            <th class="num">Facturación</th><th>Activo</th>
+          </tr>
+        </thead>
+        <tbody id="tablaOperadores"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ------------------------------------------------- modal operador -->
+  <div class="overlay" id="modalOperador" hidden>
+    <div class="modal modal--ancho">
+      <h2 id="tituloOperador">Operador</h2>
+      <div class="modal__error" id="errorOperador" hidden></div>
+      <form id="formOperador">
+        <label for="opNombre">Nombre *</label>
+        <input class="campo" id="opNombre" required>
+        <label for="opTipo">Tipo</label>
+        <select class="campo" id="opTipo"><option value="">—</option></select>
+        <label for="opMoneda">Moneda habitual *</label>
+        <select class="campo" id="opMoneda" required></select>
+        <label for="opComision">Comisión general (%)</label>
+        <input class="campo" type="number" id="opComision" min="0" max="100" step="0.01" value="0">
+        <label class="check"><input type="checkbox" id="opNeto" checked>
+          Se le transfiere el neto</label>
+        <label for="opContacto">Contacto</label>
+        <input class="campo" id="opContacto">
+        <label for="opTelefono">Teléfono</label>
+        <input class="campo" id="opTelefono">
+        <label for="opEmail">Email</label>
+        <input class="campo" type="email" id="opEmail">
+        <label for="opObservaciones">Observaciones</label>
+        <textarea class="campo" id="opObservaciones" rows="3"></textarea>
+        <label class="check"><input type="checkbox" id="opActivo" checked> Activo</label>
+
+        <div class="modal__acciones">
+          <button type="button" class="btn btn-suave" id="btnCancelarOperador">Cancelar</button>
+          <button type="submit" class="btn btn-primario">Guardar</button>
+        </div>
+      </form>
+
+      <!-- Solo con el operador ya guardado: las variantes necesitan su id. -->
+      <div id="bloqueVariantes" hidden>
+        <div class="panel__sub">Variantes por tipo de viaje y moneda</div>
+        <div class="modal__nota">
+          Si este operador cobra distinto según sea un viaje nacional o
+          internacional, o según la moneda, cargalo acá (hasta 4
+          combinaciones). El file elige el tipo de viaje y la variante que
+          corresponda se usa sola; si no hay ninguna cargada para esa
+          combinación, se usa la comisión general de arriba.
+        </div>
+        <div class="modal__error" id="errorVariante" hidden></div>
+        <form id="formVariante">
+          <label for="vaTipoViaje">Tipo de viaje *</label>
+          <select class="campo" id="vaTipoViaje">
+            <option value="Nacional">Nacional</option>
+            <option value="Internacional">Internacional</option>
+          </select>
+          <label for="vaMoneda">Moneda *</label>
+          <select class="campo" id="vaMoneda"></select>
+          <label for="vaComision">Comisión (%) *</label>
+          <input class="campo" type="number" id="vaComision" min="0" max="100" step="0.01" value="0">
+          <label class="check"><input type="checkbox" id="vaNeto" checked>
+            Se le transfiere el neto</label>
+          <div class="modal__acciones" style="justify-content:flex-start">
+            <button type="submit" class="btn btn-primario" id="btnGuardarVariante">Agregar variante</button>
+            <button type="button" class="btn btn-suave" id="btnCancelarVariante" hidden>
+              Cancelar edición</button>
+          </div>
+        </form>
+        <div class="tabla-wrap">
+          <table>
+            <thead><tr><th>Tipo de viaje</th><th>Moneda</th>
+              <th class="num">Comisión</th><th>Paga neto</th><th></th></tr></thead>
+            <tbody id="tablaVariantes"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="spamed://app/comun/qwebchannel.js"></script>
+  <script src="spamed://app/comun/util.js"></script>
+  <script src="spamed://app/operadores/operadores.js"></script>
+</body>
+</html>

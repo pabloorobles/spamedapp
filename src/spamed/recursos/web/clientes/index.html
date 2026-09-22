@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Clientes</title>
+<link rel="stylesheet" href="spamed://app/comun/tokens.css">
+<link rel="stylesheet" href="spamed://app/comun/base.css">
+<link rel="stylesheet" href="spamed://app/clientes/clientes.css">
+</head>
+<body>
+  <div class="cab">
+    <div>
+      <h1>Clientes</h1>
+      <div class="cab__bajada" id="bajada">Cargando…</div>
+    </div>
+    <div class="cab__acciones">
+      <button class="btn btn-suave" id="btnSeguimiento" type="button" disabled>Seguimiento</button>
+      <button class="btn btn-suave" id="btnDocumentacion" type="button" disabled>Documentación</button>
+      <button class="btn btn-suave" id="btnTarjetas" type="button" disabled>Tarjetas…</button>
+      <button class="btn btn-suave" id="btnEstadoCuenta" type="button" disabled>Estado de cuenta</button>
+      <button class="btn btn-primario" id="btnNuevo" type="button">Nuevo</button>
+    </div>
+  </div>
+
+  <div class="filtros">
+    <input class="campo campo--ancho" type="search" id="fBusqueda" placeholder="Buscar clientes...">
+    <label class="check"><input type="checkbox" id="fActivos"> Solo activos</label>
+    <select class="campo" id="fMesCumple"><option value="0">Cumpleaños: todo el año</option></select>
+    <label class="check"><input type="checkbox" id="fSinNovedades">
+      Sin novedades hace +3 meses</label>
+  </div>
+
+  <div class="panel">
+    <div class="acciones">
+      <button class="btn btn-suave" id="btnEditar" type="button" disabled>Editar</button>
+      <span class="acciones__espacio"></span>
+      <button class="btn btn-suave" id="btnEliminar" type="button" disabled>Eliminar</button>
+      <button class="btn btn-suave" id="btnExportar" type="button">Exportar</button>
+    </div>
+    <div class="tabla-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Apellido</th><th>Nombre</th><th>DNI</th><th>Teléfono</th>
+            <th>Email</th><th>Canal</th><th>Cumpleaños</th><th class="num">Files</th>
+            <th class="num">Facturado</th><th>Última interacción</th><th>Alertas</th>
+          </tr>
+        </thead>
+        <tbody id="tablaClientes"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- --------------------------------------------------- modal cliente -->
+  <div class="overlay" id="modalCliente" hidden>
+    <form class="modal" id="formCliente">
+      <h2 id="tituloCliente">Cliente</h2>
+      <div class="modal__error" id="errorCliente" hidden></div>
+
+      <label for="clDni">DNI *</label>
+      <input class="campo" id="clDni" required>
+      <label for="clApellido">Apellido *</label>
+      <input class="campo" id="clApellido" required>
+      <label for="clNombre">Nombre *</label>
+      <input class="campo" id="clNombre" required>
+      <label for="clTelefono">Teléfono</label>
+      <input class="campo" id="clTelefono">
+      <label for="clEmail">Email</label>
+      <input class="campo" type="email" id="clEmail">
+      <label for="clDireccion">Dirección</label>
+      <input class="campo" id="clDireccion">
+      <label for="clFechaNac">Cumpleaños</label>
+      <input class="campo" type="date" id="clFechaNac">
+      <label for="clDniVto">Vencimiento del DNI</label>
+      <input class="campo" type="date" id="clDniVto">
+      <label for="clFechaAlta">Fecha de alta</label>
+      <input class="campo" type="date" id="clFechaAlta">
+      <label for="clCanal">¿Cómo nos conoció?</label>
+      <select class="campo" id="clCanal"><option value="">—</option></select>
+      <label for="clDetalleCanal">Detalle</label>
+      <input class="campo" id="clDetalleCanal">
+      <label for="clObservaciones">Observaciones</label>
+      <textarea class="campo" id="clObservaciones" rows="3"></textarea>
+      <label class="check"><input type="checkbox" id="clActivo" checked> Activo</label>
+
+      <div class="modal__acciones">
+        <button type="button" class="btn btn-suave" id="btnCancelarCliente">Cancelar</button>
+        <button type="submit" class="btn btn-primario">Guardar</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- ----------------------------------------------- modal seguimiento -->
+  <div class="overlay" id="modalSeguimiento" hidden>
+    <div class="modal modal--ancho">
+      <h2>Seguimiento de <span id="nombreSeguimiento"></span></h2>
+      <div class="modal__error" id="errorSeguimiento" hidden></div>
+      <form id="formSeguimiento">
+        <label for="sgFecha">Fecha</label>
+        <input class="campo" type="date" id="sgFecha">
+        <label for="sgCanal">Canal</label>
+        <select class="campo" id="sgCanal"><option value="">—</option></select>
+        <label for="sgNota">Nota *</label>
+        <textarea class="campo" id="sgNota" rows="2" placeholder="Qué se habló" required></textarea>
+        <label for="sgProximo">Volver a contactar</label>
+        <input class="campo" type="date" id="sgProximo">
+        <div class="modal__acciones" style="justify-content:flex-start">
+          <button type="submit" class="btn btn-primario">Registrar contacto</button>
+          <button type="button" class="btn btn-suave" id="btnBorrarSeguimiento" disabled>
+            Borrar seleccionado</button>
+        </div>
+      </form>
+      <div class="panel__sub">Historial</div>
+      <div class="tabla-wrap">
+        <table>
+          <thead><tr><th>Fecha</th><th>Canal</th><th>Nota</th>
+            <th>Recontactar</th><th>File</th></tr></thead>
+          <tbody id="tablaSeguimiento"></tbody>
+        </table>
+      </div>
+      <div class="modal__acciones">
+        <button type="button" class="btn btn-suave" id="btnCerrarSeguimiento">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- --------------------------------------------------- modal tarjetas -->
+  <div class="overlay" id="modalTarjetas" hidden>
+    <div class="modal modal--ancho">
+      <h2>Tarjetas de <span id="nombreTarjetas"></span></h2>
+      <div class="modal__nota">Solo a modo de referencia, para saber con qué tarjeta suele pagar.
+        Nunca se guarda el número completo ni el código de seguridad.</div>
+      <div class="modal__error" id="errorTarjeta" hidden></div>
+      <form id="formTarjeta">
+        <label for="tjMarca">Marca</label>
+        <input class="campo" id="tjMarca" placeholder="Visa, Mastercard, Amex…">
+        <label for="tjUltimos4">Últimos 4 dígitos</label>
+        <input class="campo" id="tjUltimos4" maxlength="4" placeholder="1234">
+        <label for="tjVencimiento">Vencimiento</label>
+        <input class="campo" id="tjVencimiento" placeholder="MM/AA, ej. 08/27">
+        <label for="tjNota">Nota</label>
+        <input class="campo" id="tjNota">
+        <div class="modal__acciones" style="justify-content:flex-start">
+          <button type="submit" class="btn btn-primario" id="btnGuardarTarjeta">Agregar tarjeta</button>
+          <button type="button" class="btn btn-suave" id="btnCancelarTarjeta" hidden>
+            Cancelar edición</button>
+        </div>
+      </form>
+      <div class="panel__sub">Tarjetas cargadas</div>
+      <div class="tabla-wrap">
+        <table>
+          <thead><tr><th>Marca</th><th>Terminada en</th><th>Vencimiento</th>
+            <th>Nota</th><th></th></tr></thead>
+          <tbody id="tablaTarjetas"></tbody>
+        </table>
+      </div>
+      <div class="modal__acciones">
+        <button type="button" class="btn btn-suave" id="btnCerrarTarjetas">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="spamed://app/comun/qwebchannel.js"></script>
+  <script src="spamed://app/comun/util.js"></script>
+  <script src="spamed://app/clientes/clientes.js"></script>
+</body>
+</html>

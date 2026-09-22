@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Caja</title>
+<link rel="stylesheet" href="spamed://app/comun/tokens.css">
+<link rel="stylesheet" href="spamed://app/comun/base.css">
+<link rel="stylesheet" href="spamed://app/caja/caja.css">
+</head>
+<body>
+  <div class="cab">
+    <div>
+      <h1>Caja</h1>
+      <div class="cab__bajada" id="bajada">Cargando…</div>
+    </div>
+    <div class="cab__acciones">
+      <button class="btn btn-primario" id="btnNuevo" type="button">Nuevo movimiento</button>
+    </div>
+  </div>
+
+  <div class="filtros">
+    <input class="campo campo--ancho" type="search" id="fBusqueda"
+           placeholder="Buscar concepto, file, detalle...">
+    <select class="campo" id="fTipo">
+      <option value="">Todos</option>
+      <option value="INGRESO">Ingresos</option>
+      <option value="EGRESO">Egresos</option>
+    </select>
+    <select class="campo" id="fMoneda"><option value="">Todas</option></select>
+    <label>Desde</label>
+    <input class="campo" type="date" id="fDesde">
+    <label>Hasta</label>
+    <input class="campo" type="date" id="fHasta">
+  </div>
+
+  <div class="panel">
+    <div class="acciones">
+      <button class="btn btn-suave" id="btnEditar" type="button">Editar</button>
+      <button class="btn btn-acento" id="btnCambio" type="button">Cambio de moneda</button>
+      <button class="btn btn-suave" id="btnRecibo" type="button">Imprimir recibo</button>
+      <span class="acciones__espacio"></span>
+      <button class="btn btn-suave" id="btnEliminar" type="button">Eliminar</button>
+      <button class="btn btn-suave" id="btnExportar" type="button">Exportar</button>
+    </div>
+
+    <div class="tabla-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Fecha</th><th>Tipo</th><th>Concepto</th><th>File</th>
+            <th>Cliente</th><th>Mon.</th><th class="num">Monto</th>
+            <th>Medio</th><th>Detalle</th>
+          </tr>
+        </thead>
+        <tbody id="tablaCaja"></tbody>
+      </table>
+    </div>
+    <div class="totales" id="totales"></div>
+  </div>
+
+  <!-- ------------------------------------------------- modal movimiento -->
+  <div class="overlay" id="modalMovimiento" hidden>
+    <form class="modal" id="formMovimiento">
+      <h2 id="tituloMovimiento">Movimiento de caja</h2>
+      <div class="modal__error" id="errorMovimiento" hidden></div>
+
+      <label for="mTipo">Tipo *</label>
+      <select class="campo" id="mTipo" required>
+        <option value="INGRESO">INGRESO (entra plata)</option>
+        <option value="EGRESO">EGRESO (sale plata)</option>
+      </select>
+
+      <label for="mFecha">Fecha *</label>
+      <input class="campo" type="date" id="mFecha" required>
+
+      <label for="mConcepto">Concepto *</label>
+      <select class="campo" id="mConcepto" required></select>
+
+      <label for="mReserva">File asociado</label>
+      <select class="campo" id="mReserva">
+        <option value="">(gasto o ingreso general)</option>
+      </select>
+      <div class="modal__nota" id="infoReserva"></div>
+
+      <label for="mMoneda">Moneda *</label>
+      <select class="campo" id="mMoneda" required></select>
+
+      <label for="mMonto">Monto *</label>
+      <input class="campo" type="number" id="mMonto" step="0.01" min="0.01" required>
+
+      <label for="mMedio">Medio de pago</label>
+      <select class="campo" id="mMedio"></select>
+
+      <label for="mDetalle">Detalle</label>
+      <textarea class="campo" id="mDetalle" rows="3"></textarea>
+
+      <div class="modal__acciones">
+        <button type="button" class="btn btn-suave" id="btnComprobantes" disabled>
+          Comprobantes…</button>
+        <span class="acciones__espacio"></span>
+        <button type="button" class="btn btn-suave" id="btnCancelarMovimiento">Cancelar</button>
+        <button type="submit" class="btn btn-primario">Guardar</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- ----------------------------------------------------- modal cambio -->
+  <div class="overlay" id="modalCambio" hidden>
+    <form class="modal" id="formCambio">
+      <h2>Cambio de moneda</h2>
+      <div class="modal__error" id="errorCambio" hidden></div>
+
+      <label for="cFecha">Fecha *</label>
+      <input class="campo" type="date" id="cFecha" required>
+
+      <label for="cMonedaOrigen">Sale (moneda) *</label>
+      <select class="campo" id="cMonedaOrigen" required></select>
+
+      <label for="cMontoOrigen">Sale (monto) *</label>
+      <input class="campo" type="number" id="cMontoOrigen" step="0.01" min="0.01" required>
+
+      <label for="cMonedaDestino">Entra (moneda) *</label>
+      <select class="campo" id="cMonedaDestino" required></select>
+
+      <label for="cMontoDestino">Entra (monto) *</label>
+      <input class="campo" type="number" id="cMontoDestino" step="0.01" min="0.01" required>
+
+      <label for="cMedio">Medio</label>
+      <select class="campo" id="cMedio"></select>
+
+      <label for="cDetalle">Detalle</label>
+      <textarea class="campo" id="cDetalle" rows="2"></textarea>
+
+      <div class="modal__nota" id="infoCotizacion">Las monedas no se consolidan: cada una
+        mantiene su saldo propio en los reportes.</div>
+
+      <div class="modal__acciones">
+        <button type="button" class="btn btn-suave" id="btnCancelarCambio">Cancelar</button>
+        <button type="submit" class="btn btn-primario">Registrar</button>
+      </div>
+    </form>
+  </div>
+
+  <script src="spamed://app/comun/qwebchannel.js"></script>
+  <script src="spamed://app/caja/caja.js"></script>
+</body>
+</html>

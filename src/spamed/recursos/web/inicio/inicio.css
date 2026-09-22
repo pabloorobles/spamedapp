@@ -1,0 +1,23 @@
+/* Inicio — solo lo que no está ya en comun/base.css (cabecera, filtros,
+   kpis, panel, tablas: eso es compartido por todas las pantallas). */
+
+.pipeline {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+}
+.pipeline__paso { display: flex; align-items: center; flex: 1 1 0; min-width: 0; }
+.chip {
+  flex: 1 1 auto; display: flex; flex-direction: column; align-items: center;
+  gap: 7px; padding: 16px 6px; border-radius: 16px; border: 1.5px solid var(--borde);
+  color: var(--texto-suave); font-size: 12px; font-weight: 600; text-align: center;
+  transition: border-color .18s ease, background .18s ease, transform .18s ease;
+}
+.chip:hover { transform: translateY(-2px); }
+.chip__n { font-family: var(--fuente-titulos); font-size: 21px; font-weight: 700;
+           font-variant-numeric: tabular-nums; }
+.pipeline__linea { flex: 0 0 14px; align-self: center; height: 2px; background: var(--borde); border-radius: 2px; margin: 0 1px; }
+/* Separa visualmente Vencido/Cancelado (se desvían del camino principal)
+   del resto, sin usar una segunda fila: mismo renglón, un poco más de aire
+   en vez de la línea de conexión. */
+.pipeline__separador { flex: 0 0 22px; }

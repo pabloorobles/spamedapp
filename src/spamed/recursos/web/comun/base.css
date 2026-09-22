@@ -1,0 +1,286 @@
+/* Spamed Travel — estilos base compartidos por todas las pantallas web.
+   Los colores/tipografia salen siempre de tokens.css (generado desde
+   core/tema.py), nunca literales aca. Cada pantalla suma su propio
+   <pantalla>.css solo con lo que le es propio. */
+
+* { box-sizing: border-box; }
+/* color-scheme (el que decide si los popups nativos -- <select>,
+   <input type=date> -- salen claros u oscuros) lo define tokens.css junto
+   con el resto de la paleta, para que dependa del data-theme de la app y
+   no del sistema operativo. No declarar uno acá aparte. */
+
+body {
+  margin: 0;
+  background: var(--fondo);
+  color: var(--texto);
+  font-family: var(--fuente-texto);
+  font-size: 15px;
+  line-height: 1.6;
+  position: relative;
+  isolation: isolate;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition-duration: .001ms !important; animation-duration: .001ms !important; }
+}
+
+/* --------------------------------------------------------------- scroll
+   QtWebEngine es Chromium, así que los pseudo-elementos -webkit- andan.
+   Sin esto, Chromium dibuja su barra por defecto (con una línea blanca de
+   borde que no sigue el tema). Track transparente + thumb que solo se
+   pinta cuando el mouse está sobre el contenedor que scrollea, como en
+   la mayoría de las apps (overlay scrollbar, no siempre visible). */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-corner { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background-color: transparent;
+  border: 2px solid transparent;
+  border-radius: 999px;
+  background-clip: padding-box;
+  transition: background-color .15s ease;
+}
+:hover::-webkit-scrollbar-thumb { background-color: var(--borde-fuerte); }
+
+/* -------------------------------------------------------- marca de agua
+   El isotipo de marca, muy tenue, fijo en una esquina -- no compite con
+   el contenido (los paneles son opaques encima) pero se nota en los
+   huecos. Un solo lugar: lo heredan todas las pantallas que usan este
+   archivo. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image: url("spamed://app/comun/marca_agua.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: min(58vw, 760px);
+  filter: blur(.5px);
+  opacity: .09;
+  pointer-events: none;
+  z-index: 0;
+}
+:root[data-theme="dark"] body::before { opacity: .13; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) body::before { opacity: .13; }
+}
+/* Todo el contenido real va por encima de la marca de agua. */
+body > * { position: relative; z-index: 1; }
+
+/* ------------------------------------------------------------ cabecera */
+.cab {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  gap: 16px; margin-bottom: 26px; flex-wrap: wrap;
+}
+.cab h1 {
+  font-family: var(--fuente-titulos); font-size: 30px; font-weight: 700;
+  margin: 0; letter-spacing: -.01em; text-wrap: balance;
+}
+.cab__bajada { color: var(--texto-suave); font-size: 13.5px; margin-top: 7px; }
+.cab__acciones { display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* -------------------------------------------------------------- campos */
+.filtros {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 10px;
+  background: var(--superficie); border: 1px solid var(--borde);
+  border-radius: 16px; padding: 10px 12px; margin-bottom: 22px;
+  font-size: 13px; box-shadow: var(--sombra-1);
+}
+.filtros label {
+  color: var(--texto-suave); font-size: 12px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: .04em; padding-left: 6px;
+}
+.campo {
+  background: var(--fondo);
+  border: 1px solid var(--borde-fuerte);
+  border-radius: 11px;
+  padding: 9px 13px;
+  color: var(--texto);
+  font: inherit;
+  font-size: 13.5px;
+}
+.campo:focus-visible { outline: 2px solid var(--acento); outline-offset: 1px; }
+.campo--ancho { flex: 1 1 220px; min-width: 160px; }
+.check {
+  display: inline-flex; align-items: center; gap: 6px; color: var(--texto-suave);
+  font-size: 13px; cursor: pointer; user-select: none;
+}
+.check input { width: 15px; height: 15px; accent-color: var(--primario); cursor: pointer; }
+
+/* ------------------------------------------------------------- botones */
+.btn {
+  border-radius: 11px; padding: 10px 18px; font: inherit; font-size: 13.5px;
+  font-weight: 600; cursor: pointer; border: 1px solid transparent;
+  transition: background .15s ease, border-color .15s ease, opacity .15s ease, transform .15s ease;
+}
+.btn:disabled { opacity: .45; cursor: default; }
+.btn-primario { background: var(--primario); color: var(--sobre-primario); }
+.btn-primario:hover:not(:disabled) { background: var(--primario-alt); }
+.btn-acento { background: var(--acento); color: var(--sobre-acento); }
+.btn-acento:hover:not(:disabled) { background: var(--acento-osc); }
+.btn-suave {
+  background: transparent; border-color: var(--borde-fuerte); color: var(--texto);
+}
+.btn-suave:hover:not(:disabled) {
+  border-color: var(--primario); color: var(--primario); background: var(--seleccion);
+}
+
+/* -------------------------------------------------------------- acciones */
+.acciones {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 16px;
+}
+.acciones__espacio { flex: 1 1 auto; }
+
+/* --------------------------------------------------------------- tabs
+   Solapas dentro de una pantalla (ej. Gastos fijos/Extraordinarios/
+   Arqueos en Caja y gastos, o los estados en Reservas). */
+.tabs {
+  display: flex; gap: 4px; border-bottom: 1px solid var(--borde);
+  margin: 0 0 20px; overflow-x: auto;
+}
+.tab {
+  padding: 11px 16px; font-size: 13.5px; font-weight: 600; color: var(--texto-suave);
+  cursor: pointer; border-bottom: 2.5px solid transparent; white-space: nowrap;
+  transition: color .15s ease, border-color .15s ease;
+}
+.tab:hover { color: var(--texto); }
+.tab.activo { color: var(--primario); border-color: var(--primario); }
+.panel-tab { display: none; }
+.panel-tab.activo { display: block; }
+
+/* -------------------------------------------------------------- panel */
+.panel {
+  background: var(--superficie);
+  border: 1px solid var(--borde);
+  border-radius: 22px;
+  padding: 24px 26px 28px;
+  margin-bottom: 22px;
+  box-shadow: var(--sombra-1);
+}
+.panel h2 {
+  font-family: var(--fuente-titulos); font-size: 14px; font-weight: 700;
+  color: var(--texto); margin: 0 0 18px;
+}
+
+/* --------------------------------------------------------- herramienta
+   Fila "titulo + explicacion + boton a la derecha", para pantallas tipo
+   menu de acciones (ej. Herramientas). */
+.herramientas__titulo {
+  font-family: var(--fuente-titulos); font-size: 11px; font-weight: 700;
+  letter-spacing: .06em; text-transform: uppercase; color: var(--texto-suave);
+  margin: 22px 0 10px;
+}
+.herramientas__titulo:first-child { margin-top: 0; }
+.herramienta {
+  display: flex; align-items: center; gap: 18px;
+  background: var(--superficie); border: 1px solid var(--borde); border-radius: 18px;
+  padding: 16px 20px; margin-bottom: 10px; box-shadow: var(--sombra-1);
+}
+.herramienta__texto { flex: 1 1 auto; min-width: 0; }
+.herramienta__nombre { font-weight: 700; font-size: 14px; margin-bottom: 3px; }
+.herramienta__detalle { color: var(--texto-suave); font-size: 12.5px; }
+.herramienta .btn { flex: none; min-width: 150px; text-align: center; }
+
+/* --------------------------------------------------------------- kpis */
+.kpis {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 18px; margin-bottom: 26px;
+}
+.kpi {
+  background: var(--superficie); border: 1px solid var(--borde); border-radius: 20px;
+  padding: 22px 24px; box-shadow: var(--sombra-1); position: relative; overflow: hidden;
+  transition: transform .2s cubic-bezier(.2,.8,.2,1), box-shadow .2s ease;
+}
+.kpi::before {
+  content: ""; position: absolute; inset: 0 0 auto 0; height: 3px;
+  background: var(--tinte, var(--primario));
+}
+.kpi:hover { transform: translateY(-3px); box-shadow: var(--sombra-2); }
+.kpi__eyebrow {
+  display: flex; align-items: center; gap: 9px;
+  font-family: var(--fuente-titulos); font-size: 11px; font-weight: 700;
+  letter-spacing: .07em; text-transform: uppercase; color: var(--texto-suave);
+  margin-bottom: 15px;
+}
+.kpi__valor {
+  font-family: var(--fuente-titulos); font-weight: 700; font-size: 23px;
+  font-variant-numeric: tabular-nums; line-height: 1.3; letter-spacing: -.01em;
+  transition: opacity .18s ease;
+}
+.kpi__sub { color: var(--texto-suave); font-size: 12.5px; margin-top: 7px; }
+.kpi--ok { --tinte: var(--ok); }
+.kpi--error { --tinte: var(--error); }
+.kpi--primario { --tinte: var(--primario); }
+.kpi--accent { --tinte: var(--acento-osc); }
+.kpi--ok .kpi__valor { color: var(--ok); }
+.kpi--error .kpi__valor { color: var(--error); }
+.kpi--primario .kpi__valor { color: var(--primario); }
+.kpi--accent .kpi__valor { color: var(--acento-osc); }
+
+/* -------------------------------------------------------------- tablas */
+.tabla-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 13.5px; }
+th {
+  text-align: left; font-family: var(--fuente-titulos); font-size: 11px; font-weight: 700;
+  letter-spacing: .05em; text-transform: uppercase; color: var(--texto-suave);
+  padding: 10px 12px; border-bottom: 1px solid var(--borde); white-space: nowrap;
+}
+td { padding: 13px 12px; border-bottom: 1px solid var(--borde); white-space: nowrap; }
+tbody tr:last-child td { border-bottom: none; }
+tbody tr { transition: background .12s ease; cursor: default; }
+tbody tr:nth-child(even) { background: var(--alterna); }
+tbody tr:hover { background: var(--seleccion); }
+tbody tr.seleccionada { background: var(--seleccion); }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+td.file { color: var(--primario); font-weight: 700; }
+td.alerta { color: var(--alerta); }
+.vacio { color: var(--texto-suave); text-align: center; padding: 30px 0; font-size: 13.5px; }
+
+.badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 4px 10px 4px 8px; border-radius: 999px; font-size: 11px; font-weight: 600;
+  color: #fff;
+}
+.badge::before { content: ""; width: 6px; height: 6px; border-radius: 50%;
+                  background: rgba(255,255,255,.85); }
+
+.totales {
+  color: var(--texto); background: var(--superficie-2); border: 1px solid var(--borde);
+  border-radius: 14px; padding: 10px 16px; font-weight: 600; font-size: 12.5px;
+}
+
+/* -------------------------------------------------------- overlay/modal */
+.overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,.45);
+  display: flex; align-items: center; justify-content: center;
+  padding: 24px; z-index: 100;
+}
+.overlay[hidden] { display: none; }
+.modal {
+  background: var(--superficie); border: 1px solid var(--borde); border-radius: 20px;
+  padding: 24px 26px; max-width: 560px; width: 100%; max-height: calc(100vh - 48px);
+  overflow-y: auto; box-shadow: var(--sombra-3);
+}
+.modal--ancho { max-width: 760px; }
+.modal .tabla-wrap { margin-top: 4px; }
+.modal .panel__sub {
+  font-family: var(--fuente-titulos); font-size: 11px; font-weight: 700;
+  letter-spacing: .04em; color: var(--texto-suave); margin: 18px 0 10px;
+}
+.modal h2 {
+  font-family: var(--fuente-titulos); font-size: 17px; font-weight: 700; margin: 0 0 18px;
+}
+.modal .campo, .modal select, .modal textarea {
+  width: 100%; margin-top: 4px; margin-bottom: 14px;
+}
+.modal label {
+  display: block; font-size: 12.5px; font-weight: 600; color: var(--texto-suave);
+}
+.modal__acciones { display: flex; justify-content: flex-end; gap: 8px; margin-top: 6px; }
+.modal__error {
+  background: color-mix(in srgb, var(--error) 12%, var(--superficie));
+  border: 1px solid var(--error); color: var(--error); border-radius: 10px;
+  padding: 8px 12px; font-size: 12.5px; margin-bottom: 14px;
+}
+.modal__error[hidden] { display: none; }
+.modal__nota { color: var(--texto-suave); font-size: 12px; margin: -8px 0 14px; }

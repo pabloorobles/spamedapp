@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Humo — Etapa 0</title>
+<link rel="stylesheet" href="spamed://app/comun/tokens.css">
+<style>
+  body {
+    margin: 0;
+    padding: 26px;
+    background: var(--fondo);
+    color: var(--texto);
+    font-family: var(--fuente-texto);
+  }
+  h1 { font-family: var(--fuente-titulos); font-weight: 600; font-size: 18px; }
+  .fila { display: flex; gap: 10px; flex-wrap: wrap; margin: 14px 0; }
+  .chip {
+    padding: 8px 14px;
+    border-radius: 12px;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  #resultado {
+    margin-top: 18px;
+    padding: 14px 16px;
+    border-radius: 12px;
+    border: 1px solid var(--borde);
+    background: var(--superficie);
+  }
+  #resultado.ok { border-color: var(--ok); }
+  #resultado.error { border-color: var(--error); color: var(--error); }
+  code { font-family: Consolas, monospace; }
+</style>
+</head>
+<body>
+  <h1>Etapa 0 — plomería de las pantallas web</h1>
+  <p>Si ves esta página con estos colores y podés leer un saludo abajo,
+  las tres piezas de la Etapa 0 están funcionando:</p>
+  <ol>
+    <li>El esquema <code>spamed://</code> sirvió este HTML y el CSS de
+    marca (<code>tokens.css</code>) — si no funcionara, verías texto sin
+    estilo, blanco y negro.</li>
+    <li><code>qwebchannel.js</code> se sirvió desde el recurso interno de
+    Qt.</li>
+    <li>El canal Python↔JavaScript respondió — el texto de abajo lo
+    generó Python, no JavaScript.</li>
+  </ol>
+
+  <div class="fila">
+    <span class="chip" style="background:var(--primario)">primario</span>
+    <span class="chip" style="background:var(--acento); color:var(--sobre-acento)">acento</span>
+    <span class="chip" style="background:var(--nav)">nav</span>
+    <span class="chip" style="background:var(--estado-confirmado)">estado confirmado</span>
+    <span class="chip" style="background:var(--estado-vencido)">estado vencido</span>
+  </div>
+
+  <div id="resultado">Cargando canal…</div>
+
+  <script src="spamed://app/comun/qwebchannel.js"></script>
+  <script>
+    new QWebChannel(qt.webChannelTransport, function (canal) {
+      var puente = canal.objects.puente;
+      var el = document.getElementById("resultado");
+      if (!puente) {
+        el.textContent = "El canal cargó pero no llegó el objeto 'puente'.";
+        el.className = "error";
+        return;
+      }
+      puente.saludar("Pablo", function (respuesta) {
+        el.textContent = respuesta;
+        el.className = "ok";
+      });
+    });
+  </script>
+</body>
+</html>

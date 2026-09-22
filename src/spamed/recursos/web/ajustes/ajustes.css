@@ -1,0 +1,9 @@
+/* Ajustes — solo lo que no está ya en comun/base.css. */
+
+.btn-flecha {
+  background: transparent; border: 1px solid var(--borde-fuerte); border-radius: 8px;
+  color: var(--texto); cursor: pointer; width: 26px; height: 26px; font-size: 12px;
+  line-height: 1; margin-left: 4px;
+}
+.btn-flecha:hover:not(:disabled) { border-color: var(--primario); color: var(--primario); }
+.btn-flecha:disabled { opacity: .35; cursor: default; }

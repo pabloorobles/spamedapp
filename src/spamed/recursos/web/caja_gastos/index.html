@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Caja y gastos</title>
+<link rel="stylesheet" href="spamed://app/comun/tokens.css">
+<link rel="stylesheet" href="spamed://app/comun/base.css">
+<link rel="stylesheet" href="spamed://app/caja_gastos/caja_gastos.css">
+</head>
+<body>
+  <div class="cab">
+    <div>
+      <h1>Caja y gastos</h1>
+      <div class="cab__bajada">Gastos fijos, gastos extraordinarios y arqueos de caja</div>
+    </div>
+  </div>
+
+  <div class="tabs" id="tabs">
+    <div class="tab activo" data-tab="fijos">Gastos fijos</div>
+    <div class="tab" data-tab="extra">Gastos extraordinarios</div>
+    <div class="tab" data-tab="arqueos">Arqueos de caja</div>
+  </div>
+
+  <!-- ------------------------------------------------------- gastos fijos -->
+  <section class="panel-tab activo" id="tabFijos">
+    <div class="modal__nota" style="margin:0 0 14px">
+      Alquiler, sueldos, internet: lo que pagás todos los meses. Se cargan una vez y
+      después se generan desde Cierre contable, sin tener que anotarlos de nuevo.
+    </div>
+    <div class="acciones">
+      <button class="btn btn-primario" id="btnNuevoFijo" type="button">Nuevo gasto fijo</button>
+      <button class="btn btn-suave" id="btnEditarFijo" type="button" disabled>Editar</button>
+      <button class="btn btn-suave" id="btnEliminarFijo" type="button" disabled>Eliminar</button>
+    </div>
+    <div class="panel" style="padding:0; overflow:hidden">
+      <div class="tabla-wrap">
+        <table>
+          <thead><tr><th>Concepto</th><th>Mon.</th><th class="num">Importe</th>
+            <th>Día</th><th>Periodicidad</th><th>Vigencia</th><th>Medio</th>
+            <th>Activo</th><th>Último generado</th></tr></thead>
+          <tbody id="tablaFijos"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ------------------------------------------------ gastos extraordinarios -->
+  <section class="panel-tab" id="tabExtra">
+    <div class="modal__nota" style="margin:0 0 14px">
+      Gastos puntuales que no se repiten todos los meses ni están asociados a un file:
+      una reparación, una compra única.
+    </div>
+    <div class="acciones">
+      <button class="btn btn-primario" id="btnNuevoExtra" type="button">Nuevo gasto</button>
+      <button class="btn btn-suave" id="btnEditarExtra" type="button" disabled>Editar</button>
+      <button class="btn btn-suave" id="btnExportarExtra" type="button">Exportar</button>
+    </div>
+    <div class="panel" style="padding:0; overflow:hidden">
+      <div class="tabla-wrap">
+        <table>
+          <thead><tr><th>Fecha</th><th>Concepto</th><th>Mon.</th>
+            <th class="num">Monto</th><th>Medio</th><th>Detalle</th></tr></thead>
+          <tbody id="tablaExtra"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="totales" id="totalesExtra"></div>
+  </section>
+
+  <!-- ----------------------------------------------------------- arqueos -->
+  <section class="panel-tab" id="tabArqueos">
+    <div class="modal__nota" style="margin:0 0 14px">
+      Contás el efectivo que tenés en la caja y lo comparás con lo que dice el
+      sistema. La diferencia queda registrada.
+    </div>
+    <div class="acciones">
+      <button class="btn btn-primario" id="btnNuevoArqueo" type="button">Nuevo arqueo</button>
+      <button class="btn btn-suave" id="btnEliminarArqueo" type="button" disabled>Eliminar</button>
+    </div>
+    <div class="panel" style="padding:0; overflow:hidden">
+      <div class="tabla-wrap">
+        <table>
+          <thead><tr><th>Fecha</th><th>Mon.</th><th class="num">Sistema</th>
+            <th class="num">Contado</th><th class="num">Diferencia</th><th>Nota</th></tr></thead>
+          <tbody id="tablaArqueos"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ------------------------------------------------- modal gasto fijo -->
+  <div class="overlay" id="modalFijo" hidden>
+    <form class="modal" id="formFijo">
+      <h2 id="tituloFijo">Gasto fijo</h2>
+      <div class="modal__error" id="errorFijo" hidden></div>
+      <label for="gfConcepto">Concepto *</label>
+      <select class="campo" id="gfConcepto"></select>
+      <label for="gfMoneda">Moneda</label>
+      <select class="campo" id="gfMoneda"></select>
+      <label for="gfImporte">Importe *</label>
+      <input class="campo" type="number" id="gfImporte" min="0" step="0.01" value="0">
+      <label for="gfDia">Día del mes</label>
+      <input class="campo" type="number" id="gfDia" min="1" max="28" value="1">
+      <label for="gfMedio">Medio de pago</label>
+      <select class="campo" id="gfMedio"><option value="">—</option></select>
+      <label for="gfPeriodicidad">Periodicidad</label>
+      <select class="campo" id="gfPeriodicidad"></select>
+      <label for="gfFechaInicio">Fecha de inicio</label>
+      <input class="campo" type="date" id="gfFechaInicio">
+      <label for="gfFechaFin">Fecha de fin</label>
+      <input class="campo" type="date" id="gfFechaFin">
+      <label for="gfCuotas">Cantidad de cuotas (0 = sin límite)</label>
+      <input class="campo" type="number" id="gfCuotas" min="0" value="0">
+      <label class="check"><input type="checkbox" id="gfActivo" checked> Activo</label>
+      <div class="modal__nota">
+        El día va de 1 a 28 para que exista en todos los meses. Con una periodicidad
+        distinta de Mensual hace falta cargar la fecha de inicio, para saber en qué
+        meses corresponde generarlo. Fecha de fin y cantidad de cuotas son opcionales
+        y pueden usarse juntas: se corta con lo primero que se cumpla.
+      </div>
+      <div class="modal__acciones">
+        <button type="button" class="btn btn-suave" id="btnCancelarFijo">Cancelar</button>
+        <button type="submit" class="btn btn-primario">Guardar</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- --------------------------------------------- modal gasto extraordinario -->
+  <div class="overlay" id="modalExtra" hidden>
+    <form class="modal" id="formExtra">
+      <h2 id="tituloExtra">Gasto extraordinario</h2>
+      <div class="modal__error" id="errorExtra" hidden></div>
+      <label for="exFecha">Fecha *</label>
+      <input class="campo" type="date" id="exFecha" required>
+      <label for="exConcepto">Concepto</label>
+      <select class="campo" id="exConcepto"><option value="">—</option></select>
+      <label for="exMoneda">Moneda *</label>
+      <select class="campo" id="exMoneda" required></select>
+      <label for="exMonto">Monto *</label>
+      <input class="campo" type="number" id="exMonto" min="0" step="0.01" value="0">
+      <label for="exMedio">Medio de pago</label>
+      <select class="campo" id="exMedio"><option value="">—</option></select>
+      <label for="exDetalle">Detalle</label>
+      <input class="campo" id="exDetalle">
+      <div class="modal__acciones">
+        <button type="button" class="btn btn-suave" id="btnCancelarExtra">Cancelar</button>
+        <button type="submit" class="btn btn-primario">Guardar</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- ----------------------------------------------------- modal arqueo -->
+  <div class="overlay" id="modalArqueo" hidden>
+    <form class="modal" id="formArqueo">
+      <h2>Arqueo de caja</h2>
+      <div class="modal__nota">
+        Se compara contra los movimientos con medio de pago «Efectivo» hasta la
+        fecha indicada.
+      </div>
+      <label for="arFecha">Fecha</label>
+      <input class="campo" type="date" id="arFecha">
+      <label for="arMoneda">Moneda</label>
+      <select class="campo" id="arMoneda"></select>
+      <label>Según el sistema</label>
+      <div class="campo" id="arSistema" style="background:var(--superficie-2)">-</div>
+      <label for="arContado">Efectivo contado *</label>
+      <input class="campo" type="number" id="arContado" min="0" step="0.01" value="0">
+      <label>Diferencia</label>
+      <div class="campo" id="arDif" style="background:var(--superficie-2); font-weight:700">-</div>
+      <label for="arNota">Nota</label>
+      <input class="campo" id="arNota">
+      <div class="modal__acciones">
+        <button type="button" class="btn btn-suave" id="btnCancelarArqueo">Cancelar</button>
+        <button type="submit" class="btn btn-primario">Registrar</button>
+      </div>
+    </form>
+  </div>
+
+  <script src="spamed://app/comun/qwebchannel.js"></script>
+  <script src="spamed://app/comun/util.js"></script>
+  <script src="spamed://app/caja_gastos/caja_gastos.js"></script>
+</body>
+</html>

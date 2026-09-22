@@ -1,0 +1,8 @@
+# Spamed Travel - dependencias (Python 3.11+ de 64 bits)
+PySide6-Essentials>=6.8,<6.12
+# QtWebEngine (Chromium empaquetado) para las pantallas migradas a
+# HTML/CSS/JS. Ver MIGRACION_WEB.md. Bastante mas pesado que el resto de
+# las dependencias: es esperable que la instalacion tarde mas y que el
+# .exe final crezca sensiblemente.
+PySide6-Addons>=6.8,<6.12
+openpyxl>=3.1.2

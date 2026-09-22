@@ -1,0 +1,6 @@
+/* Operadores — solo lo que no está ya en comun/base.css. */
+
+button.icono-quitar {
+  background: transparent; border: none; color: var(--error); cursor: pointer;
+  font-size: 12px; padding: 2px 6px;
+}

@@ -1,0 +1,119 @@
+/* Spamed Travel - variables de marca (generado desde core/tema.py) */
+
+:root {
+    color-scheme: light;
+    --fondo: #F6F2EC;
+    --superficie: #FFFFFF;
+    --superficie-2: #EFE7D8;
+    --alterna: #F9F5EF;
+    --borde: #E3D9C6;
+    --borde-fuerte: #CEBFA3;
+    --texto: #16161F;
+    --texto-suave: #6B6B78;
+    --primario: #2E2E8C;
+    --primario-alt: #3D3DA3;
+    --primario-osc: #22226A;
+    --acento: #F0A848;
+    --acento-osc: #DB9636;
+    --seleccion: #DCE0F5;
+    --sobre-primario: #FFFFFF;
+    --sobre-acento: #2E2E8C;
+    --ok: #6FA24B;
+    --alerta: #CC8F3D;
+    --error: #B0403C;
+    --nav: #1E7A8C;
+    --nav-alt: #28919F;
+    --nav-texto: #D7ECEF;
+    --nav-activo: #FFFFFF;
+    --estado-cotizado: #7C819E;
+    --estado-reservado: #1890C0;
+    --estado-confirmado: #6FA24B;
+    --estado-emitido: #1E7A8C;
+    --estado-en-viaje: #2E2E8C;
+    --estado-finalizado: #6B7280;
+    --estado-vencido: #F0A848;
+    --estado-cancelado: #B0403C;
+    --fuente-texto: "Instrument Sans", "Segoe UI", Verdana, Arial;
+    --fuente-titulos: "Outfit", "Segoe UI Variable Display", Verdana, Arial;
+    --sombra-1: 0 1px 2px rgba(30,20,10,.05);
+    --sombra-2: 0 12px 28px -14px rgba(30,20,10,.22);
+    --sombra-3: 0 24px 48px -18px rgba(30,20,10,.32);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --fondo: #0F1120;
+    --superficie: #1B1F35;
+    --superficie-2: #252A45;
+    --alterna: #1F2439;
+    --borde: #2F3552;
+    --borde-fuerte: #414868;
+    --texto: #E8E9F2;
+    --texto-suave: #9AA0BF;
+    --primario: #8489DA;
+    --primario-alt: #9AA0E8;
+    --primario-osc: #5D62B0;
+    --acento: #F5B565;
+    --acento-osc: #E0A050;
+    --seleccion: #2C3358;
+    --sobre-primario: #FFFFFF;
+    --sobre-acento: #2E2E8C;
+    --ok: #8FC46E;
+    --alerta: #E8B36B;
+    --error: #E07A76;
+    --nav: #0F2E34;
+    --nav-alt: #173F47;
+    --nav-texto: #A9D3D9;
+    --nav-activo: #FFFFFF;
+    --estado-cotizado: #9AA0BF;
+    --estado-reservado: #4FB4DE;
+    --estado-confirmado: #8FC46E;
+    --estado-emitido: #3FA6B8;
+    --estado-en-viaje: #8489DA;
+    --estado-finalizado: #8A90AB;
+    --estado-vencido: #F5B565;
+    --estado-cancelado: #E07A76;
+    --sombra-1: 0 1px 2px rgba(0,0,0,.3);
+    --sombra-2: 0 14px 32px -16px rgba(0,0,0,.55);
+    --sombra-3: 0 28px 56px -20px rgba(0,0,0,.65);
+  }
+}
+
+:root[data-theme="dark"] {
+    color-scheme: dark;
+    --fondo: #0F1120;
+    --superficie: #1B1F35;
+    --superficie-2: #252A45;
+    --alterna: #1F2439;
+    --borde: #2F3552;
+    --borde-fuerte: #414868;
+    --texto: #E8E9F2;
+    --texto-suave: #9AA0BF;
+    --primario: #8489DA;
+    --primario-alt: #9AA0E8;
+    --primario-osc: #5D62B0;
+    --acento: #F5B565;
+    --acento-osc: #E0A050;
+    --seleccion: #2C3358;
+    --sobre-primario: #FFFFFF;
+    --sobre-acento: #2E2E8C;
+    --ok: #8FC46E;
+    --alerta: #E8B36B;
+    --error: #E07A76;
+    --nav: #0F2E34;
+    --nav-alt: #173F47;
+    --nav-texto: #A9D3D9;
+    --nav-activo: #FFFFFF;
+    --estado-cotizado: #9AA0BF;
+    --estado-reservado: #4FB4DE;
+    --estado-confirmado: #8FC46E;
+    --estado-emitido: #3FA6B8;
+    --estado-en-viaje: #8489DA;
+    --estado-finalizado: #8A90AB;
+    --estado-vencido: #F5B565;
+    --estado-cancelado: #E07A76;
+    --sombra-1: 0 1px 2px rgba(0,0,0,.3);
+    --sombra-2: 0 14px 32px -16px rgba(0,0,0,.55);
+    --sombra-3: 0 28px 56px -20px rgba(0,0,0,.65);
+}

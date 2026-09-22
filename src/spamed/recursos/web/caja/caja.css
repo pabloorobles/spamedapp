@@ -1,0 +1,4 @@
+/* Caja — solo lo que no está ya en comun/base.css. */
+
+.monto-ingreso { color: var(--ok); font-weight: 600; }
+.monto-egreso { color: var(--error); font-weight: 600; }
