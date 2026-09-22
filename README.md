@@ -36,23 +36,26 @@ falta el *Microsoft Visual C++ Redistributable x64*.
 ## Publicar una versión nueva
 
 El instalador lo compila GitHub Actions en un runner de Windows
-(`.github/workflows/release.yml`), no hace falta una PC Windows a mano.
+(`.github/workflows/release.yml`); no hace falta tener una PC Windows a mano
+ni crear el tag vos mismo.
 
-```bash
-# 1. Subir el número de versión en los TRES archivos (el workflow verifica
-#    que coincidan y corta si no):
-#      src/spamed/core/config.py   APP_VERSION
-#      build/version_info.txt      filevers / prodvers / los dos strings
-#      build/installer.iss         MiVersion
-# 2. Commitear ese cambio y etiquetar:
-git tag v1.1.1
-git push origin v1.1.1
-```
+**La regla es una sola: subir el número de versión publica un Release.**
 
-El tag dispara la compilación y, cuando termina, el Release queda publicado
-con el instalador y el zip adjuntos. Desde *Actions → Release de Windows →
-Run workflow* también se puede compilar sin publicar nada, para probar un
-cambio del `.spec`.
+1. Cambiar el número en los **tres** archivos donde vive (el workflow corta
+   la compilación si no coinciden):
+   - `src/spamed/core/config.py` → `APP_VERSION`
+   - `build/version_info.txt` → `filevers`, `prodvers` y los dos strings de versión
+   - `build/installer.iss` → `MiVersion`
+2. Commitear y pushear.
+
+El workflow compila, corre las pruebas de negocio, revisa el bundle y —si esa
+versión todavía no tiene Release— publica `vX.Y.Z` con el instalador y el zip
+adjuntos, creando el tag solo. Si el Release ya existe no toca nada, así que
+pushear mil veces a la misma rama no republica ni pisa un instalador que
+alguien ya bajó.
+
+Desde *Actions → Release de Windows → Run workflow* también se puede compilar
+a mano para probar un cambio del `.spec` sin publicar.
 
 ---
 
