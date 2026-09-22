@@ -2,7 +2,13 @@
 venv/
 __pycache__/
 *.pyc
-build/
 dist/
-*.spec
 .env
+
+# OJO: la carpeta build/ NO va ignorada. Antes lo estaba, y el efecto era que
+# spamed.spec, build.bat, installer.iss y version_info.txt --- todo lo que
+# hace falta para compilar --- vivian solo en la PC de Pablo. Un clon limpio
+# del repo no se podia compilar. Lo que si sobra son los temporales que deja
+# PyInstaller:
+build/build/
+*.manifest

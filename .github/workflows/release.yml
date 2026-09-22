@@ -1,0 +1,176 @@
+# Compila Spamed Travel para Windows y publica el resultado como Release.
+#
+# Por que existe: la app es un .exe de Windows (PyInstaller + Inno Setup) y
+# no se puede compilar en Linux ni en el entorno de Claude Code. Este
+# workflow usa un runner Windows de GitHub, asi que el instalador se arma
+# solo y queda descargable desde la pestana Releases del repo.
+#
+# Se dispara de dos formas:
+#   - al empujar un tag que empiece con "v" (ej: v1.1.0) -> compila Y publica
+#     el Release con los archivos adjuntos;
+#   - a mano desde Actions -> "Run workflow" -> solo compila y deja los
+#     archivos como artifacts (util para probar un cambio del .spec sin
+#     publicar nada).
+#
+# La version del Release sale del tag. Tiene que coincidir con APP_VERSION
+# de src/spamed/core/config.py, build/version_info.txt y MiVersion de
+# build/installer.iss: el paso "Verificar que la version coincide" corta la
+# compilacion si no coinciden, para no publicar un instalador mal rotulado.
+
+name: Release de Windows
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  windows:
+    runs-on: windows-latest
+
+    steps:
+      - name: Traer el codigo
+        uses: actions/checkout@v4
+
+      - name: Preparar Python 3.11 (64 bits)
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          architecture: "x64"
+          cache: "pip"
+
+      - name: Instalar dependencias
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+          python -m pip install pyinstaller
+
+      # Sin este paso, un SyntaxError aparece mas tarde como un
+      # "invalid module" de PyInstaller, sin decir la causa real.
+      - name: Verificar sintaxis (compileall)
+        run: python -m compileall -q src
+
+      - name: Pruebas de negocio
+        run: python -u tests/test_negocio.py
+
+      # Las pruebas de interfaz (tests/test_interfaz.py) no corren aca a
+      # proposito: necesitan QtWebEngine renderizando, y un runner sin GPU no
+      # puede hacerlo (esta documentado en MIGRACION_WEB.md, etapa 1). Se
+      # corren en la PC de desarrollo.
+
+      - name: Averiguar la version
+        id: version
+        shell: pwsh
+        run: |
+          $tag = "${{ github.ref_name }}"
+          if ("${{ github.ref_type }}" -eq "tag") {
+            $version = $tag -replace '^v', ''
+          } else {
+            $version = (Select-String -Path src/spamed/core/config.py `
+              -Pattern 'APP_VERSION\s*=\s*"([^"]+)"').Matches[0].Groups[1].Value
+          }
+          echo "numero=$version" >> $env:GITHUB_OUTPUT
+          echo "Version a compilar: $version"
+
+      - name: Verificar que la version coincide en los tres lugares
+        shell: pwsh
+        run: |
+          $esperada = "${{ steps.version.outputs.numero }}"
+          $fallos = @()
+
+          $enConfig = (Select-String -Path src/spamed/core/config.py `
+            -Pattern 'APP_VERSION\s*=\s*"([^"]+)"').Matches[0].Groups[1].Value
+          if ($enConfig -ne $esperada) {
+            $fallos += "config.py dice $enConfig"
+          }
+
+          $enIss = (Select-String -Path build/installer.iss `
+            -Pattern '#define\s+MiVersion\s+"([^"]+)"').Matches[0].Groups[1].Value
+          if ($enIss -ne $esperada) {
+            $fallos += "installer.iss dice $enIss"
+          }
+
+          $enVer = (Select-String -Path build/version_info.txt `
+            -Pattern "StringStruct\('ProductVersion',\s*'([^']+)'\)").Matches[0].Groups[1].Value
+          if ($enVer -ne $esperada) {
+            $fallos += "version_info.txt dice $enVer"
+          }
+
+          if ($fallos.Count -gt 0) {
+            Write-Host "::error::Se esperaba la version $esperada pero: $($fallos -join '; ')"
+            exit 1
+          }
+          Write-Host "Version $esperada consistente en los tres archivos."
+
+      - name: Compilar con PyInstaller
+        run: pyinstaller --noconfirm --clean build/spamed.spec
+
+      - name: Revisar el bundle
+        shell: pwsh
+        run: |
+          if (-not (Test-Path "dist/SpamedTravel/SpamedTravel.exe")) {
+            Write-Host "::error::PyInstaller no dejo el .exe."
+            exit 1
+          }
+          # Si el paquete se materializa como carpeta real adentro del
+          # bundle, le compite al paquete empaquetado y el .exe no importa
+          # sus propios modulos. Ya paso una vez (ver CLAUDE.md).
+          if (Test-Path "dist/SpamedTravel/_internal/spamed") {
+            Write-Host "::error::Quedo _internal/spamed en el bundle. Revisar build/spamed.spec."
+            exit 1
+          }
+          # Las pantallas web son diez de las once: sin esta carpeta la app
+          # compila pero arranca en blanco.
+          if (-not (Test-Path "dist/SpamedTravel/_internal/recursos/web/inicio/index.html")) {
+            Write-Host "::error::Falta recursos/web/ en el bundle."
+            exit 1
+          }
+          $tam = [math]::Round((Get-ChildItem dist/SpamedTravel -Recurse |
+                 Measure-Object -Property Length -Sum).Sum / 1MB, 1)
+          Write-Host "Bundle OK. Tamano: $tam MB"
+
+      - name: Armar el zip portable
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path dist/publicar | Out-Null
+          Compress-Archive -Path dist/SpamedTravel/* `
+            -DestinationPath "dist/publicar/SpamedTravel_${{ steps.version.outputs.numero }}_portable.zip" `
+            -Force
+
+      - name: Instalar Inno Setup
+        run: choco install innosetup --no-progress -y
+
+      - name: Armar el instalador
+        shell: pwsh
+        run: |
+          & "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe" build/installer.iss
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+          Copy-Item "dist/instalador/SpamedTravel_Setup_${{ steps.version.outputs.numero }}.exe" `
+            -Destination dist/publicar/
+
+      - name: Guardar los archivos como artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: SpamedTravel-${{ steps.version.outputs.numero }}-windows
+          path: dist/publicar/*
+          retention-days: 30
+
+      - name: Publicar el Release
+        if: github.ref_type == 'tag'
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $v = "${{ steps.version.outputs.numero }}"
+          # Las notas viven en .github/NOTAS_RELEASE.md con __VERSION__ como
+          # marcador, para no tener texto largo embebido en el YAML.
+          (Get-Content .github/NOTAS_RELEASE.md -Raw) -replace '__VERSION__', $v |
+            Set-Content notas_release.md -Encoding utf8
+          $archivos = Get-ChildItem dist/publicar/* | ForEach-Object { $_.FullName }
+          gh release create $env:GITHUB_REF_NAME @archivos `
+            --title "Spamed Travel $v" `
+            --notes-file notas_release.md
