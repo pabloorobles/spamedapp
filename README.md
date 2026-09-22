@@ -1,5 +1,7 @@
 # Spamed Travel — aplicación de escritorio
 
+[![Última versión](https://img.shields.io/github/v/release/pabloorobles/spamedapp?label=descargar&color=2E2E8C)](https://github.com/pabloorobles/spamedapp/releases/latest)
+
 Reemplazo del libro `BaseDatosSpamed.xlsm` por una aplicación Windows con base
 de datos real. Gestiona reservas (files), caja, clientes, vendedores,
 proveedores, comisiones y reportes.
@@ -46,7 +48,9 @@ ni crear el tag vos mismo.
    - `src/spamed/core/config.py` → `APP_VERSION`
    - `build/version_info.txt` → `filevers`, `prodvers` y los dos strings de versión
    - `build/installer.iss` → `MiVersion`
-2. Commitear y pushear.
+2. Commitear y pushear **a `main`** (el workflow solo publica desde ahí:
+   publicar desde una rama sin mergear dejaría un Release de código que no
+   está en la rama principal).
 
 El workflow compila, corre las pruebas de negocio, revisa el bundle y —si esa
 versión todavía no tiene Release— publica `vX.Y.Z` con el instalador y el zip

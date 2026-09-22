@@ -7,15 +7,17 @@
 #
 # Se dispara de tres formas:
 #   - al empujar un tag que empiece con "v" (ej: v1.1.0);
-#   - al empujar a main o a una rama de trabajo claude/**;
-#   - a mano desde Actions -> "Run workflow" (solo disponible una vez que
-#     este archivo este en la rama por defecto).
+#   - al empujar a main;
+#   - a mano desde Actions -> "Run workflow".
 #
 # En los tres casos compila y deja los archivos como artifact. Ademas
 # PUBLICA el Release cuando la version de config.py todavia no tiene uno:
 # o sea, subir el numero de version es lo que dispara una publicacion. Si
-# el Release ya existe no se toca nada, asi que empujar mil veces a la
-# misma rama no republica ni pisa un instalador ya descargado.
+# el Release ya existe no se toca nada, asi que empujar mil veces a main no
+# republica ni pisa un instalador ya descargado.
+#
+# Solo dispara desde main a proposito: publicar desde una rama sin mergear
+# dejaria un Release de codigo que no esta en la rama principal.
 #
 # El tag lo crea este workflow (gh release create lo genera apuntando al
 # commit que se compilo). No hace falta crearlo a mano.
@@ -25,9 +27,6 @@
 # build/version_info.txt y con MiVersion de build/installer.iss: el paso
 # "Verificar que la version coincide" corta la compilacion si no, para no
 # publicar un instalador mal rotulado.
-#
-# NOTA: la rama claude/** esta en la lista para poder cortar el primer
-# release antes de mergear a main. Una vez mergeado, se puede sacar.
 
 name: Release de Windows
 
@@ -35,7 +34,6 @@ on:
   push:
     branches:
       - main
-      - "claude/**"
     tags:
       - "v*"
   workflow_dispatch:
