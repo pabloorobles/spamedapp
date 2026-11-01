@@ -10,7 +10,7 @@
 ; la base y los backups (ver el bloque [Code] al final).
 
 #define MiNombre     "Spamed Travel"
-#define MiVersion    "1.1.0"
+#define MiVersion    "1.1.1"
 #define MiAppId      "SpamedTravel"
 #define MiEditor     "Spamed Travel"
 #define MiEjecutable "SpamedTravel.exe"

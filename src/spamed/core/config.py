@@ -7,7 +7,7 @@ from pathlib import Path
 
 APP_NAME = "Spamed Travel"
 APP_ID = "SpamedTravel"
-APP_VERSION = "1.1.0"
+APP_VERSION = "1.1.1"
 ORG_NAME = "Spamed Travel"
 
 # Porcentaje minimo de cobro para considerar una reserva "senada".
@@ -117,8 +117,39 @@ def dir_exports() -> Path:
     return destino
 
 
-def dir_recursos() -> Path:
-    """Carpeta de recursos estaticos (qss, iconos), funciona congelado o no."""
+def dirs_recursos() -> tuple[Path, ...]:
+    """Carpetas donde buscar un recurso estatico, en orden de prioridad.
+
+    Congelado devuelve SOLO la del bundle (sys._MEIPASS/recursos), y eso
+    es deliberado. Antes se buscaba tambien al lado del paquete
+    (<bundle>/spamed/recursos), como respaldo, y esa "red de seguridad"
+    fue justamente el bug de la 1.1.0: `escribir_tokens_css()` creaba
+    <bundle>/spamed/recursos/web/comun/ en el primer arranque, con
+    tokens.css adentro y nada mas. A partir de ahi `buscar_recurso("web")`
+    encontraba esa carpeta senuelo antes que la real y las diez pantallas
+    HTML quedaban en ERR_FILE_NOT_FOUND, mientras los iconos seguian
+    andando (esos no existian en el senuelo, asi que caian a la carpeta
+    buena). Si el bundle no trae recursos/, la app esta rota: mejor que
+    falle claro y no a medias.
+    """
     if es_congelado():
-        return Path(sys._MEIPASS) / "recursos"  # type: ignore[attr-defined]
-    return Path(__file__).resolve().parent.parent / "recursos"
+        return (Path(sys._MEIPASS) / "recursos",)  # type: ignore[attr-defined]
+    return (Path(__file__).resolve().parent.parent / "recursos",)
+
+
+def dir_recursos() -> Path:
+    """Carpeta de recursos estaticos (iconos, fuentes, web), congelado o no."""
+    return dirs_recursos()[0]
+
+
+def buscar_recurso(nombre: str) -> Path | None:
+    """Ubica un archivo o carpeta dentro de los recursos. None si no esta.
+
+    Vive aca y no en app.py para que se pueda probar sin importar Qt
+    (tests/test_negocio.py lo cubre); `app.recurso()` es una envoltura.
+    """
+    for base in dirs_recursos():
+        p = base / nombre
+        if p.exists():
+            return p
+    return None

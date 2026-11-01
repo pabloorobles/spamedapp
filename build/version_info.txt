@@ -7,8 +7,8 @@
 #   - build/installer.iss        -> MiVersion
 VSVersionInfo(
   ffi=FixedFileInfo(
-    filevers=(1, 1, 0, 0),
-    prodvers=(1, 1, 0, 0),
+    filevers=(1, 1, 1, 0),
+    prodvers=(1, 1, 1, 0),
     mask=0x3f,
     flags=0x0,
     OS=0x40004,
@@ -23,12 +23,12 @@ VSVersionInfo(
           '0c0a04b0',
           [StringStruct('CompanyName', 'Spamed Travel'),
            StringStruct('FileDescription', 'Spamed Travel - gestion de agencia de viajes'),
-           StringStruct('FileVersion', '1.1.0'),
+           StringStruct('FileVersion', '1.1.1'),
            StringStruct('InternalName', 'SpamedTravel'),
            StringStruct('LegalCopyright', 'Spamed Travel'),
            StringStruct('OriginalFilename', 'SpamedTravel.exe'),
            StringStruct('ProductName', 'Spamed Travel'),
-           StringStruct('ProductVersion', '1.1.0')])
+           StringStruct('ProductVersion', '1.1.1')])
       ]),
     VarFileInfo([VarStruct('Translation', [0x0c0a, 1200])])
   ]

@@ -19,8 +19,8 @@ En esa página, abajo de todo, en **Assets**, hay dos archivos:
 
 | Archivo | Para qué |
 |---|---|
-| `SpamedTravel_Setup_1.1.0.exe` | **Lo normal.** Instalador con asistente en español. No pide permisos de administrador. |
-| `SpamedTravel_1.1.0_portable.zip` | Sin instalar: descomprimir y ejecutar `SpamedTravel.exe`. Para probarlo o llevarlo en un pendrive. |
+| `SpamedTravel_Setup_1.1.1.exe` | **Lo normal.** Instalador con asistente en español. No pide permisos de administrador. |
+| `SpamedTravel_1.1.1_portable.zip` | Sin instalar: descomprimir y ejecutar `SpamedTravel.exe`. Para probarlo o llevarlo en un pendrive. |
 
 Los dos traen el mismo programa. El instalador agrega el asistente, el acceso
 directo y el desinstalador.
@@ -85,7 +85,7 @@ minutos la primera vez (QtWebEngine es pesado).
 ```
 dist\SpamedTravel\SpamedTravel.exe             <- el programa, listo para usar
 dist\SpamedTravel_portable.zip                 <- misma cosa, para copiar a otra PC
-dist\instalador\SpamedTravel_Setup_1.1.0.exe   <- solo si tenés Inno Setup
+dist\instalador\SpamedTravel_Setup_1.1.1.exe   <- solo si tenés Inno Setup
 ```
 
 Sin Inno Setup igual obtenés el programa funcionando; lo que no obtenés es el

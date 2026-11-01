@@ -14,13 +14,12 @@ from .core import config, db, tema
 
 
 def recurso(nombre: str) -> Path | None:
-    """Ubica un archivo de recursos, funcione o no empaquetado."""
-    for base in (Path(__file__).resolve().parent / "recursos",
-                 config.dir_recursos()):
-        p = base / nombre
-        if p.exists():
-            return p
-    return None
+    """Ubica un archivo de recursos, funcione o no empaquetado.
+
+    La logica real vive en `config.buscar_recurso()` para poder probarla
+    sin Qt. Esta envoltura queda porque la usa media UI.
+    """
+    return config.buscar_recurso(nombre)
 
 
 def cargar_fuentes() -> None:
@@ -86,13 +85,24 @@ def aplicar_tema(app: QApplication, nombre: str) -> None:
 def escribir_tokens_css() -> None:
     """Regenera recursos/web/comun/tokens.css desde core/tema.py.
 
-    Solo en modo desarrollo (si la carpeta no existe o no se puede
-    escribir -p. ej. dentro del .exe empaquetado, de solo lectura- no
-    pasa nada: el tokens.css que haya quedado empaquetado en el build se
-    usa tal cual, generado en su momento por build.bat).
+    SOLO en desarrollo. Congelado se sale en la primera linea, y no es
+    una optimizacion: es el arreglo del bug de la 1.1.0. La version
+    anterior asumia que el .exe empaquetado era de solo lectura y que
+    escribir ahi "no pasaba nada". Falso por partida doble: la carpeta de
+    instalacion esta bajo %LOCALAPPDATA% y es perfectamente escribible, y
+    la linea no escribia nomas sino que hacia mkdir(parents=True), o sea
+    CREABA <bundle>/spamed/recursos/web/comun/. Esa carpeta nueva, con un
+    solo archivo adentro, le ganaba despues a la carpeta de recursos real
+    en la busqueda, y las diez pantallas HTML quedaban en
+    ERR_FILE_NOT_FOUND. Ver `config.dirs_recursos()`.
+
+    En el .exe el tokens.css viene ya generado: lo regeneran build.bat y
+    el workflow de release antes de empaquetar.
     """
+    if config.es_congelado():
+        return
     try:
-        destino = Path(__file__).resolve().parent / "recursos" / "web" / "comun"
+        destino = config.dir_recursos() / "web" / "comun"
         destino.mkdir(parents=True, exist_ok=True)
         (destino / "tokens.css").write_text(tema.tokens_css(), encoding="utf-8")
     except OSError:

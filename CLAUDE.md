@@ -143,7 +143,28 @@ Las monedas **nunca se consolidan**. Ningún total debe sumar PESOS + DOLAR.
    hace que no reconozca ninguna columna y la importación entre en silencio
    sin cargar nada. La explicación de cada hoja va como comentario de celda,
    no como fila.
-6. **`documentos.*` espera `Mapping`, y `repo.Caja.listar()` devuelve
+7. **La app congelada no puede escribir adentro de su propio bundle.**
+   `app.escribir_tokens_css()` hacia
+   `(<bundle>/spamed/recursos/web/comun).mkdir(parents=True)` en cada
+   arranque, sobre el supuesto de que el `.exe` empaquetado era de solo
+   lectura. Falso por dos lados: la carpeta de instalacion esta bajo
+   `%LOCALAPPDATA%` y es escribible, y la linea no escribia nomas, creaba
+   el arbol entero. Esa carpeta recien creada le ganaba despues a la
+   carpeta de recursos real en `recurso()`, que la buscaba primero, y las
+   diez pantallas HTML quedaban en **ERR_FILE_NOT_FOUND** — con los
+   iconos y el resto de la app andando normal, porque esos no existian en
+   el senuelo y caian a la carpeta buena. Es el mismo bug de fondo que el
+   punto 2 (no materializar una carpeta `spamed` en el bundle), pero
+   creada en caliente por la app en vez de por el `.spec`, asi que el
+   chequeo de `Test-Path _internal\spamed` despues de compilar no lo veia:
+   la carpeta aparecia recien al primer arranque. Resuelto en 1.1.1:
+   `escribir_tokens_css()` se sale si `config.es_congelado()`, el build
+   regenera `tokens.css` (`build/generar_tokens_css.py`), y
+   `config.dirs_recursos()` congelado devuelve **solo** la carpeta del
+   bundle. Cubierto por `tests/test_negocio.py` y por
+   `build/verificar_congelado.py`, que corre en el workflow de release.
+
+8. **`documentos.*` espera `Mapping`, y `repo.Caja.listar()` devuelve
    `sqlite3.Row`**, que no tiene `.get()`. Los llamadores convierten con
    `[dict(m) for m in ...]` — ver `ui/reservas.py::voucher`. Si aparece un
    `AttributeError: 'sqlite3.Row' object has no attribute 'get'`, falta esa
@@ -160,7 +181,7 @@ Las monedas **nunca se consolidan**. Ningún total debe sumar PESOS + DOLAR.
 - Después de compilar, verificar `Test-Path .\dist\SpamedTravel\_internal\spamed`
   → tiene que dar `False`. Si da `True`, algo volvió a materializar el
   paquete en disco.
-- Versión actual: **1.1.0**. Se define en tres lugares que hay que mantener
+- Versión actual: **1.1.1**. Se define en tres lugares que hay que mantener
   sincronizados: `src/spamed/core/config.py` (`APP_VERSION`),
   `build/version_info.txt`, `build/installer.iss` (`MiVersion`).
 - Datos del usuario en `%LOCALAPPDATA%\SpamedTravel\` — nunca dentro de la

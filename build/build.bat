@@ -77,6 +77,18 @@ if %ERRORLEVEL% NEQ 0 (
 echo       OK.
 echo.
 
+rem --- 4b: tokens.css y guarda de "congelado no escribe" --------------
+rem  El .exe ya no regenera tokens.css al arrancar: hacerlo creaba una
+rem  carpeta senuelo que dejaba las diez pantallas HTML en
+rem  ERR_FILE_NOT_FOUND (bug de la 1.1.0). Se regenera aca y se verifica
+rem  que la app congelada no escriba dentro de su propio bundle.
+echo [4b/6] Regenerando tokens.css y verificando modo congelado...
+"%VPY%" build\generar_tokens_css.py
+if %ERRORLEVEL% NEQ 0 goto :error
+"%VPY%" build\verificar_congelado.py
+if %ERRORLEVEL% NEQ 0 goto :error
+echo.
+
 rem --- 5 de 6: PyInstaller --------------------------------------------
 echo [5/6] Compilando con PyInstaller...
 if exist "dist\SpamedTravel" rmdir /s /q "dist\SpamedTravel"
@@ -125,7 +137,7 @@ echo   LISTO
 echo ===============================================
 echo   Programa : dist\SpamedTravel\SpamedTravel.exe
 echo   Portable : dist\SpamedTravel_portable.zip
-if defined ISCC echo   Instalador: dist\instalador\SpamedTravel_Setup_1.1.0.exe
+if defined ISCC echo   Instalador: dist\instalador\SpamedTravel_Setup_1.1.1.exe
 echo.
 pause
 exit /b 0

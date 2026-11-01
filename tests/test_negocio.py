@@ -386,6 +386,38 @@ def main() -> int:
     check(bool(ec["files"]) and bool(ec["totales"]),
           "arma el estado de cuenta del cliente")
 
+    seccion("Resolucion de recursos en el .exe empaquetado")
+    # Regresion del bug de la 1.1.0: con la app congelada, una carpeta
+    # <bundle>/spamed/recursos/ creada en caliente le ganaba a la carpeta
+    # de recursos real y dejaba las diez pantallas HTML en
+    # ERR_FILE_NOT_FOUND. Se simula el layout congelado sin Qt.
+    simulado = TMP / "bundle_simulado"
+    (simulado / "recursos" / "web" / "inicio").mkdir(parents=True, exist_ok=True)
+    (simulado / "recursos" / "web" / "inicio" / "index.html").write_text("<h1>ok</h1>")
+    # El senuelo: lo que creaba escribir_tokens_css() al arrancar.
+    senuelo = simulado / "spamed" / "recursos" / "web" / "comun"
+    senuelo.mkdir(parents=True, exist_ok=True)
+    (senuelo / "tokens.css").write_text(":root{}")
+
+    from spamed.core import config as _cfg
+    sys.frozen = True            # type: ignore[attr-defined]
+    sys._MEIPASS = str(simulado)  # type: ignore[attr-defined]
+    try:
+        check(_cfg.es_congelado(), "detecta que corre empaquetado")
+        check(_cfg.dirs_recursos() == (simulado / "recursos",),
+              "congelado busca solo en la carpeta de recursos del bundle")
+        web = _cfg.buscar_recurso("web")
+        check(web == simulado / "recursos" / "web",
+              "la carpeta web resuelve a la del bundle, no al senuelo")
+        check((web / "inicio" / "index.html").is_file(),
+              "inicio/index.html se encuentra bajo esa carpeta")
+        check(_cfg.buscar_recurso("no_existe.png") is None,
+              "un recurso inexistente devuelve None")
+    finally:
+        del sys.frozen           # type: ignore[attr-defined]
+        del sys._MEIPASS         # type: ignore[attr-defined]
+    check(not _cfg.es_congelado(), "vuelve a modo desarrollo al restaurar sys")
+
     seccion("Backup")
     ruta = db.backup()
     check(ruta.exists() and ruta.stat().st_size > 0, "genera archivo de backup")

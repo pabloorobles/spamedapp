@@ -119,6 +119,23 @@ jobs:
           }
           Write-Host "Version $esperada consistente en los tres archivos."
 
+      # El .exe no regenera tokens.css al arrancar (hacerlo creaba una
+      # carpeta senuelo que rompia las pantallas web, bug de la 1.1.0), asi
+      # que se regenera aca, antes de empaquetar.
+      - name: Regenerar tokens.css desde el tema
+        shell: pwsh
+        run: |
+          python build/generar_tokens_css.py
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+
+      # Guarda del mismo bug: congelado, la app no tiene que escribir nada
+      # dentro de su propio bundle ni resolver recursos fuera de el.
+      - name: Verificar que la app congelada no escribe en el bundle
+        shell: pwsh
+        run: |
+          python build/verificar_congelado.py
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+
       - name: Compilar con PyInstaller
         run: pyinstaller --noconfirm --clean build/spamed.spec
 
